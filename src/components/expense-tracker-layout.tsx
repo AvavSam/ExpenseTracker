@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import type { FC, ReactNode } from "react";
 import { WalletCards, LayoutGrid, ArrowRightLeft, PlusCircle } from "lucide-react";
+import Image from "next/image";
 
 export type ActiveView = "dashboard" | "transactions" | "add";
 
@@ -58,7 +59,7 @@ const ExpenseTrackerLayout: FC<ExpenseTrackerLayoutProps> = ({ children, default
       <header className="sticky top-0 z-40 hidden border-b border-border bg-background md:block">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-3">
-            <WalletCards className="h-8 w-8 text-primary" />
+            <Image src="/logo.png" alt="ExpenseTracker" width={32} height={32} className="rounded-full" />
             <span className="text-xl font-bold tracking-tight text-foreground">ExpenseTracker</span>
           </div>
           {/* Desktop navigation */}

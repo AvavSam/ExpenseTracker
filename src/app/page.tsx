@@ -1,12 +1,21 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import ExpenseTrackerLayout, { type ActiveView } from "@/components/expense-tracker-layout";
 import DashboardOverview, { DashboardTransaction } from "@/components/dashboard-overview";
 import TransactionList from "@/components/transaction-list";
 import TransactionForm, { type TransactionData } from "@/components/transaction-form";
 import { useTransactionStorage, type Transaction } from "@/components/transaction-storage";
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 export default function Home() {
   const { transactions, addTransaction, updateTransaction, deleteTransaction, getFilteredTransactions, loading } = useTransactionStorage();
 
@@ -38,11 +47,18 @@ export default function Home() {
   // App-level controlled navigation state
   const [activeView, setActiveView] = useState<ActiveView>("dashboard");
 
-  // This state is used to communicate to the user that they should navigate to the 'Add' tab.
-  const [showEditPrompt, setShowEditPrompt] = useState(false);
+  // Alert Dialog state
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [transactionToDelete, setTransactionToDelete] = useState<Transaction | null>(null);
 
+  // Handle activeView changes
+  useEffect(() => {
+    // When user navigates to a view that is not the form, cancel any pending edit.
+    if (activeView !== "add" && editingTransaction) {
+      setEditingTransaction(null);
+    }
+  }, [activeView, editingTransaction]);
   const handleEditClick = (transaction: Transaction) => {
-    // The TransactionForm expects a Date object, but storage uses an ISO string.
     const transactionForForm: TransactionData = {
       ...transaction,
       date: new Date(transaction.date),
@@ -50,16 +66,25 @@ export default function Home() {
     setEditingTransaction(transactionForForm);
     setDefaultFormType(transactionForForm.type);
     setActiveView("add");
-    setShowEditPrompt(false);
   };
 
-  const handleDelete = useCallback(
-    (transaction: Transaction) => {
-      // In a real app, you'd want a confirmation dialog here.
-      deleteTransaction(transaction.id);
-    },
-    [deleteTransaction]
-  );
+  const handleDelete = (transaction: Transaction) => {
+    setTransactionToDelete(transaction);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (transactionToDelete) {
+      deleteTransaction(transactionToDelete.id);
+      setTransactionToDelete(null);
+    }
+    setDeleteDialogOpen(false);
+  };
+
+  const cancelDelete = () => {
+    setTransactionToDelete(null);
+    setDeleteDialogOpen(false);
+  };
 
   const handleCancelForm = () => {
     setEditingTransaction(null);
@@ -96,15 +121,6 @@ export default function Home() {
   };
 
   const renderContent = (activeView: ActiveView) => {
-    // When the user navigates away from the transactions tab, hide the edit prompt.
-    if (activeView !== "transactions" && showEditPrompt) {
-      setShowEditPrompt(false);
-    }
-    // When user navigates to a view that is not the form, cancel any pending edit.
-    if (activeView !== "add" && editingTransaction) {
-      setEditingTransaction(null);
-    }
-
     switch (activeView) {
       case "dashboard":
         return <DashboardOverview balance={balance} monthlyIncome={monthlyIncome} monthlyExpenses={monthlyExpenses} recentTransactions={recentTransactions} onAddIncome={handleAddIncome} onAddExpense={handleAddExpense} />;
@@ -112,11 +128,6 @@ export default function Home() {
         return (
           <div className="relative">
             <TransactionList transactions={getFilteredTransactions({ sortBy: "date", sortOrder: "desc" })} onEditTransaction={handleEditClick} onDeleteTransaction={handleDelete} />
-            {showEditPrompt && (
-              <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-md rounded-lg bg-foreground p-4 text-center text-sm font-medium text-background shadow-lg animate-in fade-in-0 slide-in-from-bottom-5">
-                Transaction selected. Please navigate to the &apos;Add&apos; tab to edit.
-              </div>
-            )}
           </div>
         );
       case "add":
@@ -146,8 +157,28 @@ export default function Home() {
   }
 
   return (
-    <ExpenseTrackerLayout defaultView="dashboard" activeView={activeView} onViewChange={setActiveView}>
-      {(activeView) => renderContent(activeView)}
-    </ExpenseTrackerLayout>
+    <>
+      <ExpenseTrackerLayout defaultView="dashboard" activeView={activeView} onViewChange={setActiveView}>
+        {(activeView) => renderContent(activeView)}
+      </ExpenseTrackerLayout>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus Transaksi</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah Anda yakin ingin menghapus transaksi "{transactionToDelete?.description}"?
+              Tindakan ini tidak dapat dibatalkan dan akan menghapus transaksi secara permanen.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={cancelDelete}>Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Hapus
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
