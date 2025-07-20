@@ -114,7 +114,7 @@ export default function Home() {
             <TransactionList transactions={getFilteredTransactions({ sortBy: "date", sortOrder: "desc" })} onEditTransaction={handleEditClick} onDeleteTransaction={handleDelete} />
             {showEditPrompt && (
               <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-md rounded-lg bg-foreground p-4 text-center text-sm font-medium text-background shadow-lg animate-in fade-in-0 slide-in-from-bottom-5">
-                Transaction selected. Please navigate to the 'Add' tab to edit.
+                Transaction selected. Please navigate to the &apos;Add&apos; tab to edit.
               </div>
             )}
           </div>

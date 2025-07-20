@@ -15,6 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar as CalendarIcon, LoaderCircle } from "lucide-react";
+import { Resolver } from "react-hook-form";
 
 const formSchema = z.object({
   type: z.enum(["expense", "income"]),
@@ -51,7 +52,7 @@ export default function TransactionForm({ transaction, onSubmit, onCancel }: Tra
   const isEditMode = !!transaction?.id;
 
   const form = useForm<FormInputValues>({
-    resolver: zodResolver(formSchema) as any,
+    resolver: zodResolver(formSchema) as Resolver<FormInputValues>,
     defaultValues: transaction
       ? {
           ...transaction,

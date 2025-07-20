@@ -105,7 +105,7 @@ export default function DashboardOverview({ balance, monthlyIncome, monthlyExpen
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">This Month's Income</CardTitle>
+                <CardTitle className="text-sm font-medium">This Month&apos;s Income</CardTitle>
                 <ArrowDownCircle className="h-5 w-5 text-primary" />
               </CardHeader>
               <CardContent>
@@ -115,7 +115,7 @@ export default function DashboardOverview({ balance, monthlyIncome, monthlyExpen
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">This Month's Expenses</CardTitle>
+                <CardTitle className="text-sm font-medium">This Month&apos;s Expenses</CardTitle>
                 <ArrowUpCircle className="h-5 w-5 text-destructive" />
               </CardHeader>
               <CardContent>
