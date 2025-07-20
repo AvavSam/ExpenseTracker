@@ -167,7 +167,7 @@ export default function Home() {
           <AlertDialogHeader>
             <AlertDialogTitle>Hapus Transaksi</AlertDialogTitle>
             <AlertDialogDescription>
-              Apakah Anda yakin ingin menghapus transaksi "{transactionToDelete?.description}"?
+              Apakah Anda yakin ingin menghapus transaksi &quot;{transactionToDelete?.description}&quot;?
               Tindakan ini tidak dapat dibatalkan dan akan menghapus transaksi secara permanen.
             </AlertDialogDescription>
           </AlertDialogHeader>

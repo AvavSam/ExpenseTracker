@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import type { FC, ReactNode } from "react";
-import { WalletCards, LayoutGrid, ArrowRightLeft, PlusCircle } from "lucide-react";
+import { LayoutGrid, ArrowRightLeft, PlusCircle } from "lucide-react";
 import Image from "next/image";
 
 export type ActiveView = "dashboard" | "transactions" | "add";
